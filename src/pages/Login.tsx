@@ -51,7 +51,7 @@ export default function Login() {
             </div>
           </div>
           <h1 className="text-3xl font-black mb-3 text-center bg-gradient-to-r from-white via-white to-white/80 bg-clip-text text-transparent">Welcome Back</h1>
-          <h2 className="text-lg font-semibold mb-6 text-center text-white/90">Hapex</h2>
+          <h2 className="text-lg font-semibold mb-6 text-center text-white/90">&nbsp;</h2>
           <p className="text-sm mb-8 max-w-md text-center text-white/80 leading-relaxed">Swift and secure money transfers worldwide. Experience banking reimagined.</p>
           <div className="grid grid-cols-2 gap-4 w-full max-w-md">
             {[

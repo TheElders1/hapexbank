@@ -56,7 +56,6 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 lg:px-8 py-3 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <img src="/storage/app/public/photos/FfZWxYEREMC8mqEkVUAlWHyFmDRlJTFVPlyT5EYx.png" alt="Hapex" className="h-9" />
-            <span className="font-bold text-lg text-white">Hapex</span>
           </Link>
           <div className="hidden md:flex items-center gap-6">
             <a href="#features" className="text-sm font-medium text-white/80 hover:text-white transition-colors">Features</a>
@@ -309,7 +308,6 @@ export default function Landing() {
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
               <img src="/storage/app/public/photos/FfZWxYEREMC8mqEkVUAlWHyFmDRlJTFVPlyT5EYx.png" alt="Hapex" className="h-8" />
-              <span className="font-bold text-white text-lg">Hapex</span>
             </div>
             <p className="text-sm mb-4">Banking reimagined for the modern world.</p>
             <div className="flex gap-3">

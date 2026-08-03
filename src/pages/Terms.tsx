@@ -54,7 +54,6 @@ export default function Terms() {
             </div>
           </Link>
           <img src="/storage/app/public/photos/FfZWxYEREMC8mqEkVUAlWHyFmDRlJTFVPlyT5EYx.png" alt="Hapex" className="h-8" />
-          <span className="font-bold text-white text-lg">Hapex</span>
         </div>
       </div>
 

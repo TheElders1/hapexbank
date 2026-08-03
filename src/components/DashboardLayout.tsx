@@ -61,7 +61,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className={sidebarHeaderClass}>
           <Link to="/dashboard" className="flex items-center gap-2">
             <img src={logoSrc} alt="Logo" className={'h-8 ' + (sidebarOpen ? 'hidden' : '')} />
-            {!sidebarOpen && <span className="font-bold text-white">Hapex</span>}
           </Link>
           <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-white/70 hover:text-white transition-colors">
             <i className={'fas ' + (sidebarOpen ? 'fa-chevron-right' : 'fa-chevron-left')} />
@@ -89,7 +88,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className={sidebarHeaderClass}>
           <Link to="/dashboard" className="flex items-center gap-2" onClick={() => setSidebarOpen(false)}>
             <img src={logoSrc} alt="Logo" className="h-8" />
-            <span className="font-bold text-white">Hapex</span>
           </Link>
           <button onClick={() => setSidebarOpen(false)} className="text-white/70 hover:text-white">
             <i className="fas fa-times" />
