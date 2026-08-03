@@ -95,7 +95,7 @@ export default function Signup() {
           <div className="lg:hidden text-center mb-6">
             <div className="relative inline-block mb-3 mt-10">
               <div className="absolute inset-0 bg-primary-500/20 rounded-2xl blur-lg" />
-              <div className="relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-3 border border-gray-200/50 dark:border-gray-700/50">
+              <div className="relative bg-gradient-to-br from-primary-700 to-primary-800 dark:from-primary-800 dark:to-primary-900 backdrop-blur-sm rounded-2xl p-3 border border-primary-600/30">
                 <img src="/storage/app/public/photos/FfZWxYEREMC8mqEkVUAlWHyFmDRlJTFVPlyT5EYx.png" alt="Logo" className="h-10 mx-auto" />
               </div>
             </div>

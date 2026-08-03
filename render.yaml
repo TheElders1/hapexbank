@@ -1,0 +1,26 @@
+# Render Blueprint for Hapex Banking
+# This file tells Render how to deploy your app.
+# Dashboard: https://dashboard.render.com → New → Blueprint → connect your repo
+
+services:
+  - type: web
+    name: hapex-banking
+    runtime: static
+    # Build command: installs deps and creates the production bundle in dist/
+    buildCommand: npm install && npm run build
+    # Publish directory: Vite outputs static files to dist/
+    publishDir: dist
+    # SPA fallback: all routes serve index.html so React Router handles them
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN

@@ -52,34 +52,34 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Navbar */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl shadow-lg' : 'bg-transparent'}`}>
+      {/* Navbar — always blue so the white logo is visible */}
+      <nav className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-gradient-to-r from-primary-700 via-primary-700 to-primary-800 dark:from-primary-800 dark:via-primary-800 dark:to-primary-900 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 lg:px-8 py-3 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <img src="/storage/app/public/photos/FfZWxYEREMC8mqEkVUAlWHyFmDRlJTFVPlyT5EYx.png" alt="Hapex" className="h-9" />
-            <span className={`font-bold text-lg ${scrolled ? 'text-gray-900 dark:text-white' : 'text-gray-900 dark:text-white'}`}>Hapex</span>
+            <span className="font-bold text-lg text-white">Hapex</span>
           </Link>
           <div className="hidden md:flex items-center gap-6">
-            <a href="#features" className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-primary-500 transition-colors">Features</a>
-            <a href="#how" className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-primary-500 transition-colors">How It Works</a>
-            <a href="#faq" className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-primary-500 transition-colors">FAQ</a>
-            <Link to="/login" className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-primary-500 transition-colors">Sign In</Link>
-            <Link to="/signup" className="px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white text-sm font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all">Open Account</Link>
+            <a href="#features" className="text-sm font-medium text-white/80 hover:text-white transition-colors">Features</a>
+            <a href="#how" className="text-sm font-medium text-white/80 hover:text-white transition-colors">How It Works</a>
+            <a href="#faq" className="text-sm font-medium text-white/80 hover:text-white transition-colors">FAQ</a>
+            <Link to="/login" className="text-sm font-medium text-white/80 hover:text-white transition-colors">Sign In</Link>
+            <Link to="/signup" className="px-4 py-2 bg-white/20 hover:bg-white/30 text-white text-sm font-semibold rounded-xl backdrop-blur-sm transition-all">Open Account</Link>
           </div>
           <div className="flex items-center gap-3">
             <DarkModeToggle />
-            <button onClick={() => setMobileMenu(!mobileMenu)} className="md:hidden text-gray-600 dark:text-gray-300 p-2">
+            <button onClick={() => setMobileMenu(!mobileMenu)} className="md:hidden text-white p-2">
               <i className={`fas ${mobileMenu ? 'fa-times' : 'fa-bars'}`} />
             </button>
           </div>
         </div>
         {mobileMenu && (
-          <div className="md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-4 py-3 space-y-2">
-            <a href="#features" onClick={() => setMobileMenu(false)} className="block text-sm text-gray-600 dark:text-gray-400 py-2">Features</a>
-            <a href="#how" onClick={() => setMobileMenu(false)} className="block text-sm text-gray-600 dark:text-gray-400 py-2">How It Works</a>
-            <a href="#faq" onClick={() => setMobileMenu(false)} className="block text-sm text-gray-600 dark:text-gray-400 py-2">FAQ</a>
-            <Link to="/login" className="block text-sm text-gray-600 dark:text-gray-400 py-2">Sign In</Link>
-            <Link to="/signup" className="block px-4 py-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white text-sm font-semibold rounded-xl text-center">Open Account</Link>
+          <div className="md:hidden bg-primary-700 dark:bg-primary-900 border-t border-white/10 px-4 py-3 space-y-2">
+            <a href="#features" onClick={() => setMobileMenu(false)} className="block text-sm text-white/80 py-2">Features</a>
+            <a href="#how" onClick={() => setMobileMenu(false)} className="block text-sm text-white/80 py-2">How It Works</a>
+            <a href="#faq" onClick={() => setMobileMenu(false)} className="block text-sm text-white/80 py-2">FAQ</a>
+            <Link to="/login" className="block text-sm text-white/80 py-2">Sign In</Link>
+            <Link to="/signup" className="block px-4 py-2 bg-white/20 text-white text-sm font-semibold rounded-xl text-center">Open Account</Link>
           </div>
         )}
       </nav>

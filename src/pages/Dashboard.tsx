@@ -38,6 +38,23 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Quick actions */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {[
+          { label: 'Send Money', icon: 'fa-paper-plane', color: 'from-primary-500 to-primary-700', link: '/transfers' },
+          { label: 'Add Card', icon: 'fa-credit-card', color: 'from-purple-500 to-purple-700', link: '/cards' },
+          { label: 'Transactions', icon: 'fa-exchange-alt', color: 'from-green-500 to-green-700', link: '/transactions' },
+          { label: 'Settings', icon: 'fa-cog', color: 'from-orange-500 to-orange-700', link: '/settings' },
+        ].map(action => (
+          <a key={action.label} href={action.link} className="group bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-soft border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
+            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center text-white mb-2 group-hover:scale-110 transition-transform`}>
+              <i className={`fas ${action.icon}`} />
+            </div>
+            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{action.label}</p>
+          </a>
+        ))}
+      </div>
+
       {/* Balance cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[
