@@ -7,6 +7,8 @@ export interface Transaction {
   type: 'credit' | 'debit'
 }
 
+export type CardDesign = 'black' | 'red' | 'gold' | 'blue'
+
 export interface Card {
   id: string
   name: string
@@ -19,6 +21,8 @@ export interface Card {
   type: 'debit' | 'credit'
   frozen: boolean
   color: string
+  design?: CardDesign
+  cardholderName?: string
 }
 
 export interface QuickContact {

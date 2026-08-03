@@ -1,4 +1,4 @@
-import type { AccountSnapshot, AccountRow, Card, Transaction } from './types'
+import type { AccountSnapshot, AccountRow, Card, Transaction, CardDesign } from './types'
 
 export const CURRENCY_SYMBOLS: Record<string, string> = {
   USD: '$',
@@ -61,6 +61,7 @@ export function getCardColor(currency: string): string {
 
 export function createDefaultCards(currency: string, balance: number): Card[] {
   const cardNumber = generateCardNumber()
+  const design: CardDesign = currency === 'EUR' ? 'black' : currency === 'GBP' ? 'gold' : 'blue'
   return [
     {
       id: crypto.randomUUID(),
@@ -74,6 +75,7 @@ export function createDefaultCards(currency: string, balance: number): Card[] {
       type: 'debit',
       frozen: false,
       color: getCardColor(currency),
+      design,
     },
   ]
 }

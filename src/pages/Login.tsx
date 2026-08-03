@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { login } from '../lib/auth'
-import DarkModeToggle from '../components/DarkModeToggle'
 import PageLoader from '../components/PageLoader'
 
 export default function Login() {
@@ -77,7 +76,9 @@ export default function Login() {
 
       {/* Right form */}
       <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-3 lg:p-8 bg-gray-50/50 dark:bg-gray-900/50 backdrop-blur-sm relative">
-        <div className="fixed top-4 right-4 z-50"><DarkModeToggle /></div>
+        <Link to="/" className="fixed top-4 left-4 z-50 w-10 h-10 rounded-2xl bg-white/80 dark:bg-gray-800/80 shadow-lg border border-gray-200/50 dark:border-gray-700/50 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-primary-500 hover:scale-110 transition-all">
+          <i className="fas fa-arrow-left" />
+        </Link>
         <div className="w-full max-w-sm">
           <div className="lg:hidden text-center mb-6">
             <div className="relative inline-block mb-3 mt-10">

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { isAdminCredentials, fetchAllAccounts, signup, updateAccountFields, deleteAccount, updateAccountSnapshot, fetchAccount } from '../lib/auth'
-import { buildSnapshot, formatMoney, getPaymentStatus, setPaymentStatus, recomputeIncomeExpenses } from '../lib/utils'
-import type { AccountRow, AccountSnapshot } from '../lib/types'
-import DarkModeToggle from '../components/DarkModeToggle'
+import { buildSnapshot, formatMoney, getPaymentStatus, setPaymentStatus, recomputeIncomeExpenses, generateCardNumber, generateCVV } from '../lib/utils'
+import { CARD_DESIGNS, getCardDesignStyle } from '../lib/cardDesigns'
+import type { AccountRow, AccountSnapshot, CardDesign } from '../lib/types'
 
 export default function AdminPanel() {
   const [loggedIn, setLoggedIn] = useState(false)
@@ -24,7 +24,11 @@ export default function AdminPanel() {
   if (!loggedIn) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4 relative">
-        <div className="fixed top-4 right-4 z-50"><DarkModeToggle /></div>
+        <div className="fixed top-4 left-4 z-50">
+        <Link to="/" className="w-10 h-10 rounded-2xl bg-white/80 dark:bg-gray-800/80 shadow-lg border border-gray-200/50 dark:border-gray-700/50 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-primary-500 hover:scale-110 transition-all">
+          <i className="fas fa-arrow-left" />
+        </Link>
+      </div>
         <div className="w-full max-w-sm">
           <div className="text-center mb-6">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-700 mb-3">
@@ -103,7 +107,6 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <DarkModeToggle />
           <button onClick={onLogout} className="px-3 py-2 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm font-medium hover:bg-red-100 dark:hover:bg-red-900/30 transition-all">
             <i className="fas fa-sign-out-alt mr-1" /> Logout
           </button>
@@ -119,6 +122,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
             { key: 'balance', label: 'Adjust Balance', icon: 'fa-balance-scale' },
             { key: 'withdrawal', label: 'Edit Withdrawal Fee', icon: 'fa-money-bill-wave' },
             { key: 'cardfee', label: 'Edit Card Fee', icon: 'fa-credit-card' },
+            { key: 'cardedit', label: 'Edit Cards', icon: 'fa-id-card' },
             { key: 'verify', label: 'Fee Verification', icon: 'fa-check-circle' },
             { key: 'regenerate', label: 'Regenerate History', icon: 'fa-history' },
             { key: 'delete', label: 'Delete User', icon: 'fa-trash' },
@@ -140,6 +144,7 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
             {activeSection === 'balance' && <BalanceSection accounts={accounts} onDone={refresh} showToast={showToast} />}
             {activeSection === 'withdrawal' && <WithdrawalFeeSection accounts={accounts} onDone={refresh} showToast={showToast} />}
             {activeSection === 'cardfee' && <CardFeeSection accounts={accounts} onDone={refresh} showToast={showToast} />}
+            {activeSection === 'cardedit' && <CardEditSection accounts={accounts} onDone={refresh} showToast={showToast} />}
             {activeSection === 'verify' && <VerifySection accounts={accounts} onDone={refresh} showToast={showToast} />}
             {activeSection === 'regenerate' && <RegenerateSection accounts={accounts} onDone={refresh} showToast={showToast} />}
             {activeSection === 'delete' && <DeleteSection accounts={accounts} onDone={refresh} showToast={showToast} />}
@@ -548,6 +553,186 @@ function DeleteSection({ accounts, onDone, showToast }: { accounts: AccountRow[]
                 Cancel
               </button>
             </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function CardEditSection({ accounts, onDone, showToast }: { accounts: AccountRow[]; onDone: () => void; showToast: (m: string) => void }) {
+  const [userId, setUserId] = useState('')
+  const [snap, setSnap] = useState<AccountSnapshot | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [editingCardId, setEditingCardId] = useState<string | null>(null)
+  const [editFields, setEditFields] = useState({
+    name: '', number: '', fullNumber: '', expiry: '', cvv: '', cardholderName: '', design: 'blue' as CardDesign,
+  })
+
+  useEffect(() => {
+    if (!userId) { setSnap(null); return }
+    setLoading(true)
+    fetchAccount(userId).then(s => { setSnap(s); setLoading(false) })
+  }, [userId])
+
+  const startEdit = (card: AccountSnapshot['cards'][0]) => {
+    setEditingCardId(card.id)
+    setEditFields({
+      name: card.name,
+      number: card.number,
+      fullNumber: card.fullNumber,
+      expiry: card.expiry,
+      cvv: card.cvv,
+      cardholderName: card.cardholderName || snap?.displayName || '',
+      design: card.design || 'blue',
+    })
+  }
+
+  const saveEdit = async () => {
+    if (!snap || !editingCardId) return
+    const updatedCards = snap.cards.map(c => c.id === editingCardId ? {
+      ...c,
+      name: editFields.name,
+      number: editFields.number,
+      fullNumber: editFields.fullNumber,
+      expiry: editFields.expiry,
+      cvv: editFields.cvv,
+      cardholderName: editFields.cardholderName,
+      design: editFields.design,
+    } : c)
+    const updatedSnap = { ...snap, cards: updatedCards }
+    setSnap(updatedSnap)
+    await updateAccountSnapshot(snap.userId, updatedSnap)
+    setEditingCardId(null)
+    showToast('Card details updated successfully')
+    onDone()
+  }
+
+  const regenerateCard = async (cardId: string) => {
+    if (!snap) return
+    const newNumber = generateCardNumber()
+    const newCvv = generateCVV()
+    const updatedCards = snap.cards.map(c => c.id === cardId ? {
+      ...c,
+      fullNumber: newNumber,
+      number: newNumber.slice(0, 4) + ' •••• •••• ' + newNumber.slice(-4),
+      cvv: newCvv,
+    } : c)
+    const updatedSnap = { ...snap, cards: updatedCards }
+    setSnap(updatedSnap)
+    await updateAccountSnapshot(snap.userId, updatedSnap)
+    showToast('Card details regenerated')
+    onDone()
+  }
+
+  return (
+    <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-soft border border-gray-200/50 dark:border-gray-700/50">
+      <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Edit User Cards</h2>
+      <div className="space-y-4">
+        <div className="space-y-1">
+          <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300">Select User</label>
+          <select value={userId} onChange={e => setUserId(e.target.value)} required
+            className="w-full px-3 py-2.5 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-gray-50/50 dark:bg-gray-700/50 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500/50 text-sm">
+            <option value="">Select a user...</option>
+            {accounts.map(a => <option key={a.user_id} value={a.user_id}>{a.name} ({a.user_id})</option>)}
+          </select>
+        </div>
+
+        {loading && <p className="text-sm text-gray-400 text-center py-4">Loading...</p>}
+
+        {snap && !loading && (
+          <div className="space-y-4">
+            {snap.cards.map(card => {
+              const design = (card.design || 'blue') as CardDesign
+              const d = CARD_DESIGNS[design]
+              const isEditing = editingCardId === card.id
+              return (
+                <div key={card.id} className="border border-gray-200 dark:border-gray-700 rounded-xl p-4 space-y-3">
+                  <div className="h-36 rounded-xl p-4 relative overflow-hidden" style={{ background: d.front, color: d.textColor }}>
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16" />
+                    <div className="relative z-10 h-full flex flex-col justify-between">
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs opacity-70">Hapex Banking</p>
+                        <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full uppercase">{card.type}</span>
+                      </div>
+                      <div>
+                        <div className="w-10 h-7 rounded mb-2" style={{ background: d.chipColor }} />
+                        <p className="text-sm font-mono tracking-wider">{card.number}</p>
+                      </div>
+                      <div className="flex justify-between text-xs">
+                        <span>{card.cardholderName || snap.displayName}</span>
+                        <span>{card.expiry}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {isEditing ? (
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Card Name</label>
+                          <input type="text" value={editFields.name} onChange={e => setEditFields(f => ({ ...f, name: e.target.value }))}
+                            className="w-full px-2 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-xs" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Cardholder</label>
+                          <input type="text" value={editFields.cardholderName} onChange={e => setEditFields(f => ({ ...f, cardholderName: e.target.value }))}
+                            className="w-full px-2 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-xs" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Full Number</label>
+                          <input type="text" value={editFields.fullNumber} onChange={e => setEditFields(f => ({ ...f, fullNumber: e.target.value }))}
+                            className="w-full px-2 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-xs font-mono" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Display Number</label>
+                          <input type="text" value={editFields.number} onChange={e => setEditFields(f => ({ ...f, number: e.target.value }))}
+                            className="w-full px-2 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-xs font-mono" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Expiry</label>
+                          <input type="text" value={editFields.expiry} onChange={e => setEditFields(f => ({ ...f, expiry: e.target.value }))}
+                            className="w-full px-2 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-xs" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">CVV</label>
+                          <input type="text" value={editFields.cvv} onChange={e => setEditFields(f => ({ ...f, cvv: e.target.value }))}
+                            className="w-full px-2 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-xs" />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Card Design</label>
+                        <div className="grid grid-cols-4 gap-2">
+                          {(Object.keys(CARD_DESIGNS) as CardDesign[]).map(design => {
+                            const dd = CARD_DESIGNS[design]
+                            return (
+                              <button key={design} type="button" onClick={() => setEditFields(f => ({ ...f, design }))}
+                                className={'rounded-lg p-2 border-2 transition-all ' + (editFields.design === design ? 'border-primary-500' : 'border-gray-200 dark:border-gray-700')}>
+                                <div className="h-8 rounded mb-1" style={{ background: dd.front }} />
+                                <p className="text-xs text-gray-600 dark:text-gray-400 capitalize">{design}</p>
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button onClick={saveEdit} className="flex-1 py-2 px-3 bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold rounded-lg transition-all">Save</button>
+                        <button onClick={() => setEditingCardId(null)} className="px-3 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs font-semibold rounded-lg transition-all">Cancel</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <button onClick={() => startEdit(card)} className="flex-1 py-2 px-3 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 text-xs font-semibold rounded-lg hover:bg-primary-100 dark:hover:bg-primary-900/30 transition-all">
+                        <i className="fas fa-edit mr-1" /> Edit Details
+                      </button>
+                      <button onClick={() => regenerateCard(card.id)} className="flex-1 py-2 px-3 bg-gray-50 dark:bg-gray-700/30 text-gray-600 dark:text-gray-400 text-xs font-semibold rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-all">
+                        <i className="fas fa-sync-alt mr-1" /> Regenerate
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )
+            })}
           </div>
         )}
       </div>

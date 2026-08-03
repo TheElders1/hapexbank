@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { getSession, clearSession, isAdminUser } from '../lib/auth'
 import type { AccountSnapshot } from '../lib/types'
-import DarkModeToggle from './DarkModeToggle'
 
 const NAV_ITEMS = [
   { path: '/dashboard', label: 'Dashboard', icon: 'fa-chart-line' },
@@ -165,7 +164,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </>
               )}
             </div>
-            <DarkModeToggle />
           </div>
         </header>
         <main className="p-4 lg:p-6">{children}</main>

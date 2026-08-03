@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import DarkModeToggle from '../components/DarkModeToggle'
 
 export default function Landing() {
   const [scrolled, setScrolled] = useState(false)
@@ -67,7 +66,6 @@ export default function Landing() {
             <Link to="/signup" className="px-4 py-2 bg-white/20 hover:bg-white/30 text-white text-sm font-semibold rounded-xl backdrop-blur-sm transition-all">Open Account</Link>
           </div>
           <div className="flex items-center gap-3">
-            <DarkModeToggle />
             <button onClick={() => setMobileMenu(!mobileMenu)} className="md:hidden text-white p-2">
               <i className={`fas ${mobileMenu ? 'fa-times' : 'fa-bars'}`} />
             </button>
@@ -124,24 +122,27 @@ export default function Landing() {
             </div>
           </div>
           <div className="relative flex justify-center">
-            <div className="w-80 h-52 rounded-2xl bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 p-6 text-white shadow-2xl floating relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20" />
-              <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full -ml-16 -mb-16" />
-              <div className="relative z-10 h-full flex flex-col justify-between">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="text-xs text-white/70">Hapex Banking</p>
-                    <p className="text-sm font-semibold mt-1">Platinum Card</p>
+            <div className="relative">
+              <img src="/images/home/metro.jpg" alt="Modern banking" className="absolute -inset-8 w-96 h-72 object-cover rounded-2xl opacity-20 blur-sm" />
+              <div className="w-80 h-52 rounded-2xl bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 p-6 text-white shadow-2xl floating relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20" />
+                <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full -ml-16 -mb-16" />
+                <div className="relative z-10 h-full flex flex-col justify-between">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-xs text-white/70">Hapex Banking</p>
+                      <p className="text-sm font-semibold mt-1">Platinum Card</p>
+                    </div>
+                    <i className="fab fa-cc-visa text-2xl" />
                   </div>
-                  <i className="fab fa-cc-visa text-2xl" />
-                </div>
-                <p className="text-lg font-mono tracking-wider">4321 •••• •••• 8901</p>
-                <div className="flex items-end justify-between">
-                  <div>
-                    <p className="text-xs text-white/60">Balance</p>
-                    <p className="text-sm font-semibold">$50,000.00</p>
+                  <p className="text-lg font-mono tracking-wider">4321 •••• •••• 8901</p>
+                  <div className="flex items-end justify-between">
+                    <div>
+                      <p className="text-xs text-white/60">Balance</p>
+                      <p className="text-sm font-semibold">$50,000.00</p>
+                    </div>
+                    <p className="text-sm font-semibold">12/29</p>
                   </div>
-                  <p className="text-sm font-semibold">12/29</p>
                 </div>
               </div>
             </div>
@@ -168,7 +169,36 @@ export default function Landing() {
             <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-2">Everything you need</h2>
             <p className="text-gray-500 dark:text-gray-400">Powerful features designed for modern banking</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid lg:grid-cols-2 gap-12 items-center mb-12">
+            <div className="relative">
+              <img src="/images/home/feature.jpg" alt="Hapex banking features" className="w-full h-64 object-cover rounded-2xl shadow-xl" />
+              <div className="absolute -bottom-4 -right-4 bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-soft border border-gray-200/50 dark:border-gray-700/50 hidden sm:block">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center">
+                    <i className="fas fa-check text-sm" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-gray-900 dark:text-white">Bank-Grade Security</p>
+                    <p className="text-xs text-gray-500">256-bit encryption</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="space-y-4">
+              {features.slice(0, 3).map(f => (
+                <div key={f.title} className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white flex-shrink-0">
+                    <i className={`fas ${f.icon} text-sm`} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-900 dark:text-white">{f.title}</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mt-0.5">{f.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {features.map(f => (
               <div key={f.title} className="group bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-soft border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform">

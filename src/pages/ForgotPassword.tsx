@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import DarkModeToggle from '../components/DarkModeToggle'
 
 export default function ForgotPassword() {
   return (
@@ -43,10 +42,12 @@ export default function ForgotPassword() {
       </div>
 
       <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-3 lg:p-8 bg-gray-50/50 dark:bg-gray-900/50 backdrop-blur-sm relative">
-        <div className="fixed top-4 right-4 z-50"><DarkModeToggle /></div>
+        <Link to="/" className="fixed top-4 left-4 z-50 w-10 h-10 rounded-2xl bg-white/80 dark:bg-gray-800/80 shadow-lg border border-gray-200/50 dark:border-gray-700/50 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-primary-500 hover:scale-110 transition-all">
+          <i className="fas fa-arrow-left" />
+        </Link>
         <div className="w-full max-w-sm">
           <div className="lg:hidden text-center mb-6">
-            <div className="relative inline-block mb-3 mt-10">
+            <div className="relative inline-block mb-3 mt-16">
               <div className="absolute inset-0 bg-primary-500/20 rounded-2xl blur-lg" />
               <div className="relative bg-gradient-to-br from-primary-700 to-primary-800 dark:from-primary-800 dark:to-primary-900 backdrop-blur-sm rounded-2xl p-3 border border-primary-600/30">
                 <img src="/storage/app/public/photos/FfZWxYEREMC8mqEkVUAlWHyFmDRlJTFVPlyT5EYx.png" alt="Logo" className="h-10 mx-auto" />
